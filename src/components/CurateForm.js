@@ -1,18 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import curatorBB from "curator-bb";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SimpleForm = () => {
   const [focusedField, setFocusedField] = useState(null);
   const [initReturnMsg, setInitReturnMsg] = useState();
 
   const callingOnceConfig = useRef(true);
-
-  // const serverURL = import.meta.env.VITE_SERVER_URL;
-  // const operatorId = import.meta.env.VITE_OPERATOR_ID;
-  // const password =
-  //   "$2a$10$CwTycUXWue0Thq9StjUM0uDm2YU7xlgzHFhFtTyhQWtk5i/LLbTDu" ||
-  //   import.meta.env.VITE_PASSWORD;
-  // const appId = import.meta.env.VITE_APP_ID;
 
   const handleFocus = (field) => {
     setFocusedField(field);
@@ -25,21 +20,21 @@ const SimpleForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    // console.log({
-    //   UserFullName: formData.get("userFullName"),
-    //   Email: formData.get("email"),
-    //   MobileNo: formData.get("mobileNo"),
-    // });
+    const formDataObject = {
+      UserFullName: formData.get("userFullName"),
+      Email: formData.get("email"),
+      MobileNo: formData.get("mobileNo"),
+    };
     curatorBB
       .curate({
-        userDetails: formData,
+        userDetails: formDataObject,
         onMessage: function (message) {
           console.log("Curate validation Message ==> ", message);
         },
       })
       .then((data) => {
         console.log("curate user :", data);
-        alert(data ? "VALID USER !!" : "INVALID USER !!");
+        toast(data == false ? "Invalid User" : "Valid User");
       })
       .catch((error) => {
         console.error("curate user :", error);
@@ -47,26 +42,28 @@ const SimpleForm = () => {
   };
 
   useEffect(() => {
-    // if (callingOnceConfig.current) {
-    //   callingOnceConfig.current = false;
-    //   curatorBB
-    //     .initialize({
-    //       serverURL: serverURL,
-    //       operatorId: operatorId,
-    //       password: password,
-    //       appId: appId,
-    //       onMessage: function (message) {
-    //         console.log("Initialize Message ==> ", message);
-    //       },
-    //     })
-    //     .then((data) => {
-    //       console.log(data);
-    //       setInitReturnMsg(data);
-    //     })
-    //     .catch((error) => {
-    //       console.error(error);
-    //     });
-    // }
+    if (callingOnceConfig.current) {
+      callingOnceConfig.current = false;
+      curatorBB
+        .initialize({
+          serverURL:
+            "https://access.axiomprotect.com:6653/AxiomProtect/v1/PreRegistration",
+          operatorId: "ganesh@mollatech.com",
+          password:
+            "$2a$10$CwTycUXWue0Thq9StjUM0uDm2YU7xlgzHFhFtTyhQWtk5i/LLbTDu",
+          appId: "kQ7DD1",
+          onMessage: function (message) {
+            console.log("Initialize Message ==> ", message);
+          },
+        })
+        .then((data) => {
+          console.log(data);
+          setInitReturnMsg(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }, []);
 
   return (
@@ -78,6 +75,7 @@ const SimpleForm = () => {
         height: "50vh",
       }}
     >
+      <ToastContainer />
       <form
         onSubmit={handleSubmit}
         style={{
@@ -193,7 +191,7 @@ const SimpleForm = () => {
             transition: "border-color 0.5s ease-in-out",
           }}
         />
-        <div style={{ display: "flex", justifyContent: "flex-start" }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <button
             type="submit"
             style={{
@@ -213,7 +211,6 @@ const SimpleForm = () => {
           </button>
         </div>
       </form>
-      <code>{JSON.stringify(initReturnMsg)}</code>
     </div>
   );
 };
