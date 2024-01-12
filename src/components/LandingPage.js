@@ -11,6 +11,7 @@ const LandingPage = () => {
         backgroundImage: `url(${image})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        overflow: "hidden",
       }}
     >
       <div
@@ -25,7 +26,7 @@ const LandingPage = () => {
           height: "95vh",
         }}
       >
-        <div style={{ marginTop: "5%" }}>
+        <div style={{ marginTop: "2%" }}>
           <h1>Welcome to Our Website!</h1>
           <p style={{ fontWeight: "bold" }}>
             Explore and engage with our company.

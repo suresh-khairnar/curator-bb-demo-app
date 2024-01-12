@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const SimpleForm = () => {
   const [focusedField, setFocusedField] = useState(null);
-  const [initReturnMsg, setInitReturnMsg] = useState();
+  // const [initReturnMsg, setInitReturnMsg] = useState();
 
   const callingOnceConfig = useRef(true);
 
@@ -58,7 +58,7 @@ const SimpleForm = () => {
         })
         .then((data) => {
           console.log(data);
-          setInitReturnMsg(data);
+          // setInitReturnMsg(data);
         })
         .catch((error) => {
           console.error(error);
@@ -72,7 +72,7 @@ const SimpleForm = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "50vh",
+        height: "60vh",
       }}
     >
       <ToastContainer />
@@ -89,6 +89,10 @@ const SimpleForm = () => {
           backgroundColor: "#ffffff",
         }}
       >
+        <h2 style={{ color:'#000', marginTop:0, }}
+        >
+          CONTACT US
+        </h2>
         <label
           htmlFor="userFullName"
           style={{
@@ -210,6 +214,7 @@ const SimpleForm = () => {
             Submit
           </button>
         </div>
+        <span style={{ color: "#000", }}>Powered by BB</span>
       </form>
     </div>
   );
