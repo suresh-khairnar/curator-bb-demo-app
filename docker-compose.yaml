@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+  passiveliveliness:
+    image: beyondfuture/curator_demo_app:v1
+    container_name: curatorapp
+    command: sh -c "cd /app/app && npm start"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    tty: true
