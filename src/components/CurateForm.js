@@ -6,6 +6,10 @@ import "react-toastify/dist/ReactToastify.css";
 const SimpleForm = () => {
   const [focusedField, setFocusedField] = useState(null);
   // const [initReturnMsg, setInitReturnMsg] = useState();
+  const [errors, setErrors] = useState({
+    userFullName: "",
+    email: "",
+    mobileNo:""})
 
   const callingOnceConfig = useRef(true);
 
@@ -17,6 +21,51 @@ const SimpleForm = () => {
     setFocusedField(null);
   };
 
+ const validateUserFullName = (value) => {
+  const minLength = 2;
+  const maxLength = 50;
+  if (!value) {
+    setErrors((prevErrors) => ({ ...prevErrors, userFullName: "Please enter a username" }));
+  } else if (/\s/.test(value)) {
+    setErrors((prevErrors) => ({ ...prevErrors, userFullName: "Username should not contain spaces between characters" }));
+  } else if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(value)) {
+    setErrors((prevErrors) => ({ ...prevErrors, userFullName: "Username should start with a letter, and can only contain letters and numbers" }));
+  } else if (value.length < minLength || value.length > maxLength) {
+    setErrors((prevErrors) => ({ ...prevErrors, userFullName: `Username must be between ${minLength} and ${maxLength} characters` }));
+  } else {
+    setErrors((prevErrors) => ({ ...prevErrors, userFullName: "" }));
+  }
+};
+
+  const validateEmail = (value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!value) {
+      setErrors((prevErrors) => ({ ...prevErrors, email: "Please enter an email address" }));
+    } else if (!emailRegex.test(value)) {
+      setErrors((prevErrors) => ({ ...prevErrors, email: "Please enter a valid email address" }));
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
+    }
+  };  
+
+  const validateMobileNo = (value) => {
+    const mobileRegex = /^[0-9]{10}$/;
+    
+    if (!value) {
+      setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "Please enter a mobile number" }));
+    } else if (!/^\d+$/.test(value)) {
+      setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "Please enter a valid mobile number, it should not contain letters" }));
+    } 
+    else if (value.length > 10) {
+      setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "Mobile number should not exceed 10 digits" }));
+    }
+    else if (!mobileRegex.test(value)) {
+      setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "Mobile number should be 10 digits only" }));
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "" }));
+    }
+  };  
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -25,6 +74,11 @@ const SimpleForm = () => {
       Email: formData.get("email"),
       MobileNo: formData.get("mobileNo"),
     };
+
+    validateUserFullName(formDataObject.UserFullName);
+    validateEmail(formDataObject.Email);
+    validateMobileNo(formDataObject.MobileNo);
+    if (!errors.userFullName && !errors.email && !errors.mobileNo) {
     curatorBB
       .curate({
         userDetails: formDataObject,
@@ -39,6 +93,10 @@ const SimpleForm = () => {
       .catch((error) => {
         console.error("curate user :", error);
       });
+    }
+    else {
+      toast.error("Please fix the errors in the form");
+    }
   };
 
   useEffect(() => {
@@ -114,6 +172,9 @@ const SimpleForm = () => {
           required
           onFocus={() => handleFocus("userFullName")}
           onBlur={handleBlur}
+          onChange={(e) => {
+            validateUserFullName(e.target.value);
+          }}
           style={{
             width: "95%",
             padding: "10px",
@@ -127,7 +188,7 @@ const SimpleForm = () => {
             transition: "border-color 0.5s ease-in-out",
           }}
         />
-
+  {errors.userFullName && <div style={{ color: "red",marginBottom:"10px",marginTop:"-10px",fontSize:"15px",textAlign:"start",paddingLeft:"10px" }}>({errors.userFullName})</div>}
         <label
           htmlFor="email"
           style={{
@@ -149,6 +210,9 @@ const SimpleForm = () => {
           required
           onFocus={() => handleFocus("email")}
           onBlur={handleBlur}
+          onChange={(e) => {
+            validateEmail(e.target.value);
+          }}
           style={{
             width: "95%",
             padding: "10px",
@@ -161,7 +225,7 @@ const SimpleForm = () => {
             transition: "border-color 0.5s ease-in-out",
           }}
         />
-
+  {errors.email && <div style={{ color: "red",marginBottom:"10px",marginTop:"-10px",fontSize:"15px",textAlign:"start",paddingLeft:"10px" }}>({errors.email})</div>}
         <label
           htmlFor="mobileNo"
           style={{
@@ -183,6 +247,9 @@ const SimpleForm = () => {
           required
           onFocus={() => handleFocus("mobileNo")}
           onBlur={handleBlur}
+          onChange={(e) => {
+            validateMobileNo(e.target.value);
+          }}
           style={{
             width: "95%",
             padding: "10px",
@@ -195,6 +262,7 @@ const SimpleForm = () => {
             transition: "border-color 0.5s ease-in-out",
           }}
         />
+        {errors.mobileNo && <div style={{ color: "red",marginBottom:"10px",marginTop:"-10px",fontSize:"15px",textAlign:"start",paddingLeft:"10px" }}>({errors.mobileNo})</div>}
         <div style={{ display: "flex", justifyContent: "center" }}>
           <button
             type="submit"
