@@ -60,7 +60,7 @@ const SimpleForm = () => {
       setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "Mobile number should not exceed 10 digits" }));
     }
     else if (!mobileRegex.test(value)) {
-      setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "Mobile number should be 10 digits only" }));
+      setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "Mobile number should be 10 digits" }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, mobileNo: "" }));
     }
